@@ -11,8 +11,9 @@ The function CreateMinidump is only available in Windows XP and Windows Server 2
 If you want to get this working in other Windows systems, copy the DLL from XP or Server 2003 and place it in the same folder.
 This DLL has no ASLR enabled and therfore the address are hardcoded.
 
-32-bit faultrep.dll = 6945AEBF push 21
-64-bit faultrep.dll = 7FF6E010945 mov r9d,21 
+32-bit Windows XP 	   faultrep.dll = 6945AEBF push 21
+32-bit Windows Server 2003 faultrep.dll = 6950BD5E add ecx,21 
+64-bit Windows XP 	   faultrep.dll = 7FF6E010945 mov r9d,21 
 */
 
 typedef int(WINAPI *CreateMinidumpProc)(DWORD, LPCWSTR, struct tagSMDumpOptions *);
@@ -57,6 +58,8 @@ int _tmain(int argc, _TCHAR* argv[]) {
 
 	{
 #ifndef _WIN64
+		//Windows Server 2003
+		//UCHAR *Patch = (UCHAR*)CreateMinidump + 0x7C51;
 		UCHAR *Patch = (UCHAR*)CreateMinidump + 0x72CC;
 #else
 		UCHAR *Patch = (UCHAR*)CreateMinidump + 0xBF47;
